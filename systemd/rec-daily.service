@@ -1,0 +1,13 @@
+[Unit]
+Description=Nightly per-shift analysis via Claude API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=__USER__
+EnvironmentFile=/etc/rec/env
+Environment=FRONTREC_CONFIG=__REPO__/config.yaml
+WorkingDirectory=__REPO__
+ExecStart=__VENV__/bin/python -m frontrec.daily
+Nice=10

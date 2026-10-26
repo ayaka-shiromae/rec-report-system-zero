@@ -1,0 +1,14 @@
+[Unit]
+Description=Front desk audio capture
+After=sound.target
+
+[Service]
+User=__USER__
+Group=audio
+ExecStart=/usr/bin/arecord -D plughw:CARD=CODEC,DEV=0 -f S16_LE -r 16000 -c 1 \
+  --max-file-time 3600 --use-strftime /var/rec/raw/%%Y%%m%%d_%%H%%M%%S.wav
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

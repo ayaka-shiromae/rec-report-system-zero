@@ -1,0 +1,7 @@
+faster-whisper>=1.2
+av<15
+anthropic>=0.60
+pyyaml
+icalendar>=6
+recurring-ical-events>=3
+weasyprint>=60

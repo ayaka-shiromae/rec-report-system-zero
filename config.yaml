@@ -1,0 +1,67 @@
+# hotel-front-recording 設定
+# 別ホテルに横展開するときはこのファイルと /etc/rec/env を書き換える。
+
+hotel:
+  name: ホテルZERO
+  description: 名古屋・名駅南のレジャーホテル   # プロンプトに渡す一言
+
+paths:
+  raw: /var/rec/raw            # 録音 WAV(1時間分割)  rec-capture が書く
+  text: /var/rec/text          # 文字起こし(1時間単位)  rec-transcribe が書く
+  shifts: /var/rec/shifts      # シフト単位に切り出した文字起こし
+  daily: /var/rec/daily        # シフト単位の一次解析(JSON)
+  report: /var/rec/report      # 週次成果物(OneDrive へ同期するルート)
+  state: /var/rec/state        # カレンダーキャッシュ等
+
+timezone: Asia/Tokyo
+
+calendar:
+  # ICS の URL 自体は秘密なので /etc/rec/env の CALENDAR_ICS_URL に置く。
+  # 予定タイトルの読み方: 「山本 (フロント)」「伊東」 → 名前 + 任意の役割
+  summary_pattern: '^\s*(?P<name>[^\s(（]+)\s*(?:[（(](?P<role>[^)）]*)[)）])?\s*$'
+  # role が空 or ここに含まれる場合だけフロント担当として扱う。空リストなら全員対象。
+  front_roles: [フロント, front]
+  # 予定に明示的な終了時刻(1時間超)があればそれを使う。無い場合の推定ルール:
+  #   終了 = 「開始 + min_hours 以降に始まる次のシフト」の開始時刻、ただし開始 + max_hours を上限
+  shift_min_hours: 6
+  shift_max_hours: 10
+
+staff:
+  # カレンダー上の表記ゆれ → レポートで使う正式名。未登録の名前はそのまま使う。
+  aliases:
+    山本: 山本
+    坂本: 坂本
+    野呂瀬: 野呂瀬
+    辻: 辻
+    伊東: 伊東
+    川畑: 川畑
+    川上: 川上
+    田口: 田口
+
+transcribe:
+  model: small                 # 精度不足なら medium
+
+analysis:
+  model: claude-opus-5-5
+  daily_max_tokens: 6000
+  weekly_max_tokens: 12000
+  # 一次解析の対象にするシフトは「終了から何分以上経過したもの」か(文字起こし完了待ち)
+  shift_settle_minutes: 90
+  # 一次解析で遡る日数(未処理分の取りこぼし救済)
+  daily_lookback_days: 3
+  # 週次で集約する日数
+  weekly_days: 7
+  batch_poll_seconds: 60
+  batch_timeout_minutes: 120
+
+report:
+  distribution_pdf: "{date}_配布用_簡易接客レポート.pdf"
+  detail_dir: 詳細レポート
+  detail_file: "{date}_{name}_詳細接客レポート.md"
+  admin_dir: 管理レポート
+  admin_file: "{date}_管理レポート.md"
+  pdf_font: "Noto Sans CJK JP"
+
+slack:
+  # Webhook URL は /etc/rec/env の SLACK_WEBHOOK_URL
+  title: "{hotel} フロント 週次フィードバック({period})"

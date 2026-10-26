@@ -1,0 +1,9 @@
+[Unit]
+Description=Transcribe finished recordings
+
+[Service]
+Type=oneshot
+User=__USER__
+Environment=FRONTREC_CONFIG=__REPO__/config.yaml
+ExecStart=__VENV__/bin/python __REPO__/scripts/transcribe.py
+Nice=10

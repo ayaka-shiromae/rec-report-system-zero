@@ -1,0 +1,13 @@
+[Unit]
+Description=Disable WiFi power save
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStartPre=/bin/sh -c 'for i in $(seq 1 30); do iw dev __WIFI__ info >/dev/null 2>&1 && exit 0; sleep 2; done; exit 1'
+ExecStart=/usr/sbin/iw dev __WIFI__ set power_save off
+
+[Install]
+WantedBy=multi-user.target
