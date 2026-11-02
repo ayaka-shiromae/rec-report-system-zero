@@ -43,8 +43,8 @@ transcribe:
 
 analysis:
   model: claude-opus-5-5
-  daily_max_tokens: 6000
-  weekly_max_tokens: 12000
+  daily_max_tokens: 16000
+  weekly_max_tokens: 20000
   # 一次解析の対象にするシフトは「終了から何分以上経過したもの」か(文字起こし完了待ち)
   shift_settle_minutes: 90
   # 一次解析で遡る日数(未処理分の取りこぼし救済)
