@@ -124,6 +124,7 @@ def main(argv=None):
 
     if people:
         pdf_path = report_root / rc["distribution_pdf"].format(date=date_tag)
+        pdf_path.parent.mkdir(parents=True, exist_ok=True)
         write_pdf(build_html(cfg.hotel_name, period, people, rc.get("pdf_font", "Noto Sans CJK JP"),
                              today.isoformat()), str(pdf_path))
         print(f"saved: {pdf_path}")

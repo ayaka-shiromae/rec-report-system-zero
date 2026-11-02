@@ -55,7 +55,7 @@ analysis:
   batch_timeout_minutes: 120
 
 report:
-  distribution_pdf: "{date}_配布用_簡易接客レポート.pdf"
+  distribution_pdf: "配布レポート/{date}_配布用_簡易接客レポート.pdf"
   detail_dir: 詳細レポート
   detail_file: "{date}_{name}_詳細接客レポート.md"
   admin_dir: 管理レポート
