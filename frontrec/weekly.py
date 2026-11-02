@@ -19,6 +19,7 @@ from .claude_batch import run_batch
 from .config import Config
 from .pdf import build_html, write_pdf
 from .slack import post
+from .slack_bot import upload_file
 
 PROMPT_DIR = pathlib.Path(__file__).parent / "prompts"
 PERSON_PROMPT = (PROMPT_DIR / "person_weekly.md").read_text(encoding="utf-8")
@@ -135,6 +136,13 @@ def main(argv=None):
             body = "\n\n".join(f"*▼ {n} さん*\n{b}" for n, b in people)
             status = post(webhook, f"*{title}*\n\n{body}\n\n_配布用PDF: {pdf_path}_")
             print(f"slack: {status}")
+
+        bot_token, bot_channel = os.environ.get("SLACK_BOT_TOKEN"), os.environ.get("SLACK_CHANNEL")
+        if bot_token and bot_channel and not args.no_slack:
+            title = cfg["slack"]["title"].format(hotel=cfg.hotel_name, period=period)
+            ok = upload_file(bot_token, bot_channel, pdf_path, title=title,
+                             comment=f"{cfg.hotel_name} 接客レポート({period})の配布用PDFです。")
+            print(f"slack file upload: {'ok' if ok else 'failed'}")
 
 
 def _run_mixed_batch(cfg: Config, requests: list[dict]) -> dict[str, str]:
